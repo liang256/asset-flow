@@ -135,21 +135,6 @@ class AssetPackage(dict):
         return commands
 
 
-class CameraPackage(AssetPackage):
-    """
-    Represents a specialized asset package for cameras.
-    """
-
-    def can_convert_to_command(self):
-        """
-        Checks if the package can be converted to commands.
-
-        Returns:
-            bool: True if the camera rig exists, False otherwise.
-        """
-        return self.child_assets["camera_rig"].get_version() is not None
-
-
 def generate_commands(packages):
     """
     Generates commands for a list of asset packages.
