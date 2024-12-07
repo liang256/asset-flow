@@ -54,22 +54,27 @@ class AssetManager(QWidget):
             # Set root asset
             root_combo = QComboBox()
             root_asset = package[root_asset_key]
-            root_combo.addItems(root_asset.available_versions)
-            root_combo.setCurrentText(root_asset.get_version())
+
+            # Add available versions + None (for UI only)
+            root_combo.addItems(list(root_asset.available_versions) + ["None"])
+            root_combo.setCurrentText(root_asset.get_version() or "None")
             root_combo.currentTextChanged.connect(
-                lambda version, asset=root_asset: asset.set_version(version)
+                lambda version, asset=root_asset: asset.set_version(None if version == "None" else version)
             )
             self.table.setCellWidget(row, 0, root_combo)
 
             # Set child assets
             for col, (asset_type, asset) in enumerate(package.child_assets.items(), start=1):
                 combo = QComboBox()
-                combo.addItems(asset.available_versions)
-                combo.setCurrentText(asset.get_version() or "")
+
+                # Add available versions + None
+                combo.addItems(list(asset.available_versions) + ["None"])
+                combo.setCurrentText(asset.get_version() or "None")
                 combo.currentTextChanged.connect(
-                    lambda version, asset=asset: asset.set_version(version)
+                    lambda version, asset=asset: asset.set_version(None if version == "None" else version)
                 )
                 self.table.setCellWidget(row, col, combo)
+
 
     def preview_command(self):
         commands = model.generate_commands(self.packages)
