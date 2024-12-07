@@ -1,34 +1,24 @@
+import sys
+import model
 from PySide6.QtWidgets import (
-    QApplication, QTableWidget, QTableWidgetItem, QComboBox, QVBoxLayout, 
+    QApplication, QTableWidget, QTableWidgetItem, QComboBox, QVBoxLayout,
     QHBoxLayout, QWidget, QLabel, QLineEdit, QPushButton
 )
-import sys
 
-class VersionTableWidget(QWidget):
-    def __init__(self):
+
+class AssetManager(QWidget):
+    def __init__(self, packages):
         super().__init__()
-
-        # Sample versions to populate the dropdown menus
-        self.versions = ["v1.0", "v2.0", "v3.0"]
+        self.packages = packages
 
         # Create the table widget
         self.table = QTableWidget()
-        self.table.setRowCount(3)  # Set the number of rows
-        self.table.setColumnCount(2)  # Set the number of columns
-        self.table.setHorizontalHeaderLabels(["Row", "Version"])
+        self.table.setRowCount(len(packages))
+        self.table.setColumnCount(3)  # ['cameraPkg', 'rig', 'animation']
+        self.table.setHorizontalHeaderLabels(["cameraPkg", "rig", "animation"])
 
         # Populate the table
-        for row in range(3):
-            # Set the row number
-            item = QTableWidgetItem(str(row + 1))
-            self.table.setItem(row, 0, item)
-
-            # Create a QComboBox for version selection
-            combo_box = QComboBox()
-            combo_box.addItems(self.versions)
-
-            # Set the QComboBox as the cell widget
-            self.table.setCellWidget(row, 1, combo_box)
+        self.populate_table()
 
         # Add command label and text input
         self.command_label = QLabel("Command:")
@@ -55,23 +45,67 @@ class VersionTableWidget(QWidget):
         layout.addLayout(button_layout)
 
         self.setLayout(layout)
-        self.setWindowTitle("Table with Dropdown Menus and Commands")
+        self.setWindowTitle("Asset Manager")
+
+    def populate_table(self):
+        for row, package in enumerate(self.packages):
+            root_asset_key = package.root_asset_key
+
+            # Set root asset
+            root_combo = QComboBox()
+            root_asset = package[root_asset_key]
+            root_combo.addItems(root_asset.available_versions)
+            root_combo.setCurrentText(root_asset.get_version())
+            root_combo.currentTextChanged.connect(
+                lambda version, asset=root_asset: asset.set_version(version)
+            )
+            self.table.setCellWidget(row, 0, root_combo)
+
+            # Set child assets
+            for col, (asset_type, asset) in enumerate(package.child_assets.items(), start=1):
+                combo = QComboBox()
+                combo.addItems(asset.available_versions)
+                combo.setCurrentText(asset.get_version() or "")
+                combo.currentTextChanged.connect(
+                    lambda version, asset=asset: asset.set_version(version)
+                )
+                self.table.setCellWidget(row, col, combo)
 
     def preview_command(self):
-        # Generate a command from the selected versions
-        commands = []
-        for row in range(self.table.rowCount()):
-            combo_box = self.table.cellWidget(row, 1)
-            selected_version = combo_box.currentText()
-            commands.append(f"Row {row + 1}: {selected_version}")
-        self.command_input.setText("; ".join(commands))
+        commands = model.generate_commands(self.packages)
+        command_strings = [
+            str(cmd) for cmd in commands
+        ]
+        self.command_input.setText("\n".join(command_strings))
+        print("Previewed commands:")  # Replace with actual preview logic
+        print(commands)
 
     def execute_command(self):
-        # Clear the command text input
         self.command_input.clear()
+        print("Executed commands.")  # Replace with actual execution logic
+
 
 if __name__ == "__main__":
+    # Sample data
+    data = [
+        model.AssetPackage(
+            "camera_asset",
+            assets={
+                "camera_asset": model.TrackedAsset(["v1", "v2"]),
+                "camera_rig": model.TrackedAsset(["rig_v1", "rig_v2"]),
+                "animation_curves": model.TrackedAsset(["anim_v1"]),
+            },
+        ),
+        model.AssetPackage(
+            "character_asset",
+            assets={
+                "character_asset": model.TrackedAsset(["v1", "v2", "v3"]),
+                "rig_puppet": model.TrackedAsset(["rig_v1", "rig_v2"]),
+            },
+        ),
+    ]
+
     app = QApplication(sys.argv)
-    window = VersionTableWidget()
+    window = AssetManager(data)
     window.show()
     sys.exit(app.exec())
