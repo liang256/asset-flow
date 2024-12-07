@@ -131,8 +131,10 @@ class AssetPackage(dict):
             return commands
 
         for asset_type, child_asset in self.child_assets.items():
-            commands.append((asset_type, child_asset.to_command()))
-        return commands
+            child_cmd = child_asset.to_command()
+            if child_cmd != "still":
+                commands.append((asset_type, child_cmd))
+        return commands if len(commands) > 1 else []
 
 
 def generate_commands(packages):
