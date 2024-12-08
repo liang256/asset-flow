@@ -9,7 +9,7 @@ def test_create_updated_package():
     package = model.AssetPackage("root_asset", assets)
 
     expected_assets = {
-        "root_asset": model.TrackedAsset([1, 2, 3], 1, "1_node"),
+        "root_asset": model.TrackedAsset([1, 2, 3], 1, "root_asset_1_node"),
         "child_asset": model.TrackedAsset([1, 2, 3]),
     }
     expected_package = model.AssetPackage("root_asset", expected_assets)

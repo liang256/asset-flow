@@ -103,15 +103,19 @@ class AssetManager(QWidget):
         self.table.clearContents()
 
 
-def create_updated_asset(asset):
+def create_updated_asset(asset, asset_type=""):
     cmd = asset.to_command()
     if "still" in cmd:
         return asset
     if "remove" in cmd:
         return model.TrackedAsset(asset.available_versions)
     if "create" in cmd:
+        if asset_type:
+            created_hub_name = f"{asset_type}_{asset.new_version}_node"
+        else:
+            created_hub_name = f"{asset.new_version}_node"
         return model.TrackedAsset(
-            asset.available_versions, asset.new_version, f"{asset.new_version}_node"
+            asset.available_versions, asset.new_version, created_hub_name
         )
     return model.TrackedAsset(
         asset.available_versions, asset.new_version, asset.hub_set_name
@@ -130,7 +134,11 @@ def create_updated_package(package):
     if "still" not in root_cmd:
         new_package = model.AssetPackage(
             package.root_asset_key,
-            {package.root_asset_key: create_updated_asset(package.root_asset)},
+            {
+                package.root_asset_key: create_updated_asset(
+                    package.root_asset, package.root_asset_key
+                )
+            },
         )
         for asset_type, asset in package.child_assets.items():
             new_package[asset_type] = model.TrackedAsset(asset.available_versions)
@@ -138,10 +146,14 @@ def create_updated_package(package):
 
     new_package = model.AssetPackage(
         package.root_asset_key,
-        {package.root_asset_key: create_updated_asset(package.root_asset)},
+        {
+            package.root_asset_key: create_updated_asset(
+                package.root_asset, package.root_asset_key
+            )
+        },
     )
     for asset_type, asset in package.child_assets.items():
-        new_package[asset_type] = create_updated_asset(asset)
+        new_package[asset_type] = create_updated_asset(asset, asset_type)
     return new_package
 
 
