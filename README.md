@@ -26,7 +26,7 @@ command = asset.to_command()  # Outputs: 'update hub_set_1 from v1 to v2'
 ```
 
 ### AssetPackage
-AssetPackage manages a collection of assets, including a root asset and its associated child assets.
+The AssetPackage class is designed to manage a cohesive collection of assets, encompassing a root asset and its associated child assets. This structure ensures that assets can be treated as a unified entity for consistent updates and operations.
 
 Example:
 ```python
