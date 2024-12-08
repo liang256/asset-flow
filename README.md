@@ -1,8 +1,6 @@
 # asset-flow
 A modular framework for managing asset versioning and command-driven workflows in production pipelines. This project demonstrates a decoupled architecture, separating business logic, data I/O, and UI, to simplify the development and maintenance of asset management tools.
 
-![Demo](demo.gif)
-
 ## Key Features
 - Command-Driven Workflow: Focuses on generating commands for operations (create, update, remove, still) instead of directly handling execution, ensuring scalability and flexibility.
 - Decoupled Architecture: Separates business logic, data fetching/writing, and UI to enhance maintainability and testability.
@@ -60,3 +58,36 @@ The to_command method generates one of the following commands for each asset:
 - update: For assets with changed versions.
 - remove: For assets marked for removal.
 - still: For assets with no changes.
+
+# UI Integration
+To demonstrate the functionality and robustness of the asset management model, a PySide6-based Asset Manager UI has been developed. This interactive graphical interface provides an intuitive way to test and visualize the asset versioning logic in real-time.
+
+![Demo](demo.gif)
+
+## Features
+- Dynamic Asset Table:
+    - Displays packages and their associated assets, including root and child assets.
+    - Allows users to switch between different versions of assets using dropdown menus.
+- Command Preview and Execution:
+    - Preview: Generates and displays commands based on the current asset state, showcasing the command-driven workflow.
+    - Execute: Simulates the application of the commands, updates the package state, and reflects changes in the UI.
+
+## Usage
+1. clone
+```
+git clone https://github.com/liang256/asset-flow.git
+cd asset-flow
+```
+2. set up venv
+```
+python -m venv venv
+source venv/bin/activate
+```
+3. install dependencies
+```
+pip install -r requirements.txt
+```
+4. run the app
+```
+python version_table.py
+```
