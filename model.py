@@ -24,7 +24,7 @@ class TrackedAsset:
 
     def __repr__(self):
         return f"TrackedAsset({self.current_version}->{self.new_version}, HubSet: {self.hub_set_name})"
-    
+
     def __eq__(self, value):
         return (
             self.current_version == value.current_version
@@ -143,7 +143,7 @@ class AssetPackage(dict):
             if child_cmd != "still":
                 commands.append((asset_type, child_cmd))
         return commands if len(commands) > 1 else []
-    
+
     def __repr__(self):
         return f"AssetPackage({self.root_asset_key}, {dict(self)})"
 
