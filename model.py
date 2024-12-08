@@ -132,12 +132,11 @@ class AssetPackage(dict):
         Returns:
             list: A list of commands.
         """
-        commands = [self.root_asset.get_hub_set()]
         root_command = self.root_asset.to_command()
         if root_command != "still":
-            commands.append(root_command)
-            return commands
+            return [self.root_asset.get_hub_set(), root_command]
 
+        commands = [self.root_asset.get_hub_set()]
         for asset_type, child_asset in self.child_assets.items():
             child_cmd = child_asset.to_command()
             if child_cmd != "still":
