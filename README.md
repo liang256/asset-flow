@@ -1,6 +1,8 @@
 # asset-flow
 A modular framework for managing asset versioning and command-driven workflows in production pipelines. This project demonstrates a decoupled architecture, separating business logic, data I/O, and UI, to simplify the development and maintenance of asset management tools.
 
+![Demo](https://github.com/liang256/asset-flow/blob/main/demo.gif)
+
 ## Key Features
 - Command-Driven Workflow: Focuses on generating commands for operations (create, update, remove, still) instead of directly handling execution, ensuring scalability and flexibility.
 - Decoupled Architecture: Separates business logic, data fetching/writing, and UI to enhance maintainability and testability.
