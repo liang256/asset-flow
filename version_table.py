@@ -89,6 +89,43 @@ class AssetManager(QWidget):
         self.command_input.clear()
         print("Executed commands.")  # Replace with actual execution logic
 
+        self.table.clearContents()
+
+
+def create_updated_package(package):
+    new_package = model.AssetPackage(package.root_asset_key, {})
+    root_cmd = package.root_asset.to_command()
+    if "still" not in root_cmd:
+        new_package[package.root_asset_key] = model.TrackedAsset(
+            package.root_asset.available_versions, 
+            package.root_asset.new_version, 
+            f"{package.root_asset_key}_{package.root_asset.new_version}_node"
+        )
+        for asset_type, asset in package.child_assets.items():
+            new_package[asset_type] = model.TrackedAsset(asset.available_versions)
+        return new_package
+
+    for asset_type, asset in package.child_assets.items():
+        cmd = asset.to_command()
+        if "create" in cmd:
+            hub_set_name = "{}_{}_node".format(asset_type, asset.new_version)
+        elif "remove" in cmd:
+            hub_set_name = None
+        else:
+            hub_set_name = asset.hub_set_name
+        
+        new_package[asset_type] = model.TrackedAsset(
+            asset.available_versions, 
+            asset.new_version, 
+            hub_set_name
+        )
+    new_package[package.root_asset_key] = model.TrackedAsset(
+        package.root_asset.available_versions, 
+        package.root_asset.new_version, 
+        package.root_asset.hub_set_name
+    )
+    return new_package
+
 
 if __name__ == "__main__":
     # Sample data
@@ -96,7 +133,7 @@ if __name__ == "__main__":
         model.AssetPackage(
             "camera_asset",
             assets={
-                "camera_asset": model.TrackedAsset(["v1", "v2"]),
+                "camera_asset": model.TrackedAsset(["cam_v1", "cam_v2"]),
                 "camera_rig": model.TrackedAsset(["rig_v1", "rig_v2"]),
                 "animation_curves": model.TrackedAsset(["anim_v1"]),
             },
@@ -104,7 +141,7 @@ if __name__ == "__main__":
         model.AssetPackage(
             "character_asset",
             assets={
-                "character_asset": model.TrackedAsset(["v1", "v2", "v3"]),
+                "character_asset": model.TrackedAsset(["test_cam_v1", "test_cam_v2", "test_cam_v3"]),
                 "rig_puppet": model.TrackedAsset(["rig_v1", "rig_v2"]),
             },
         ),

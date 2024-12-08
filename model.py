@@ -24,6 +24,14 @@ class TrackedAsset:
 
     def __repr__(self):
         return f"TrackedAsset({self.current_version}->{self.new_version}, HubSet: {self.hub_set_name})"
+    
+    def __eq__(self, value):
+        return (
+            self.current_version == value.current_version
+            and self.hub_set_name == value.hub_set_name
+            and self.new_version == value.new_version
+            and self.available_versions == value.available_versions
+        )
 
     def set_version(self, new_version):
         """
@@ -135,6 +143,9 @@ class AssetPackage(dict):
             if child_cmd != "still":
                 commands.append((asset_type, child_cmd))
         return commands if len(commands) > 1 else []
+    
+    def __repr__(self):
+        return f"AssetPackage({self.root_asset_key}, {dict(self)})"
 
 
 def generate_commands(packages):
