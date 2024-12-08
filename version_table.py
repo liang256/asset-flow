@@ -101,6 +101,8 @@ class AssetManager(QWidget):
         print("Executed commands.")  # Replace with actual execution logic
 
         self.table.clearContents()
+        self.packages = [create_updated_package(pkg) for pkg in self.packages]
+        self.populate_table()
 
 
 def create_updated_asset(asset, asset_type=""):
