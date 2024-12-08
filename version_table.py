@@ -3,15 +3,14 @@ import model
 from PySide6.QtWidgets import (
     QApplication,
     QTableWidget,
-    QTableWidgetItem,
     QComboBox,
     QVBoxLayout,
     QHBoxLayout,
     QWidget,
     QLabel,
-    QLineEdit,
+    QTextEdit,
     QPushButton,
-    QHeaderView
+    QHeaderView,
 )
 
 
@@ -34,7 +33,10 @@ class AssetManager(QWidget):
 
         # Add command label and text input
         self.command_label = QLabel("Command:")
-        self.command_input = QLineEdit()
+        self.command_input = QTextEdit()  # Use QTextEdit instead of QLineEdit
+        self.command_input.setMinimumHeight(
+            100
+        )  # Set a minimum height for better usability
 
         # Add preview and execute buttons
         self.preview_button = QPushButton("Preview")
@@ -53,7 +55,7 @@ class AssetManager(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(self.table)
         layout.addWidget(self.command_label)
-        layout.addWidget(self.command_input)
+        layout.addWidget(self.command_input)  # Add the QTextEdit to the layout
         layout.addLayout(button_layout)
 
         self.setLayout(layout)
@@ -100,14 +102,15 @@ class AssetManager(QWidget):
     def preview_command(self):
         commands = model.generate_commands(self.packages)
         command_strings = [str(cmd) for cmd in commands]
-        self.command_input.setText("\n".join(command_strings))
-        print("Previewed commands:")  # Replace with actual preview logic
+        self.command_input.setPlainText(
+            "\n".join(command_strings)
+        )  # Use setPlainText for QTextEdit
+        print("Previewed commands:")
         print(commands)
 
     def execute_command(self):
-        self.command_input.clear()
-        print("Executed commands.")  # Replace with actual execution logic
-
+        self.command_input.clear()  # Clear the QTextEdit
+        print("Executed commands.")
         self.table.clearContents()
         self.packages = [create_updated_package(pkg) for pkg in self.packages]
         self.populate_table()
