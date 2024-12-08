@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QPushButton,
+    QHeaderView
 )
 
 
@@ -24,6 +25,9 @@ class AssetManager(QWidget):
         self.table.setRowCount(len(packages))
         self.table.setColumnCount(3)  # ['cameraPkg', 'rig', 'animation']
         self.table.setHorizontalHeaderLabels(["cameraPkg", "rig", "animation"])
+
+        # Allow columns to resize dynamically
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # Populate the table
         self.populate_table()
@@ -54,6 +58,10 @@ class AssetManager(QWidget):
 
         self.setLayout(layout)
         self.setWindowTitle("Asset Manager")
+
+        # Set minimum size for the window and table
+        self.setMinimumSize(800, 600)  # Minimum window size
+        self.table.setMinimumHeight(400)
 
     def populate_table(self):
         for row, package in enumerate(self.packages):
