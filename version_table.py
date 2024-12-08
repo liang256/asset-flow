@@ -174,20 +174,20 @@ if __name__ == "__main__":
     # Sample data
     data = [
         model.AssetPackage(
-            "camera_asset",
+            "camera_package",
             assets={
-                "camera_asset": model.TrackedAsset(["cam_v1", "cam_v2"]),
+                "camera_package": model.TrackedAsset(["cam_v1", "cam_v2"]),
                 "camera_rig": model.TrackedAsset(["rig_v1", "rig_v2"]),
                 "animation_curves": model.TrackedAsset(["anim_v1"]),
             },
         ),
         model.AssetPackage(
-            "character_asset",
+            "camera_package",
             assets={
-                "character_asset": model.TrackedAsset(
+                "camera_package": model.TrackedAsset(
                     ["test_cam_v1", "test_cam_v2", "test_cam_v3"]
                 ),
-                "rig_puppet": model.TrackedAsset(["rig_v1", "rig_v2"]),
+                "camera_rig": model.TrackedAsset(["test_rig_v1", "test_rig_v2"]),
             },
         ),
     ]
