@@ -25,6 +25,14 @@ class TrackedAsset:
     def __repr__(self):
         return f"TrackedAsset({self.current_version}->{self.new_version}, HubSet: {self.hub_set_name})"
 
+    def __eq__(self, value):
+        return (
+            self.current_version == value.current_version
+            and self.hub_set_name == value.hub_set_name
+            and self.new_version == value.new_version
+            and self.available_versions == value.available_versions
+        )
+
     def set_version(self, new_version):
         """
         Sets the target version of the asset.
@@ -124,15 +132,19 @@ class AssetPackage(dict):
         Returns:
             list: A list of commands.
         """
-        commands = [self.root_asset.get_hub_set()]
         root_command = self.root_asset.to_command()
         if root_command != "still":
-            commands.append(root_command)
-            return commands
+            return [self.root_asset.get_hub_set(), root_command]
 
+        commands = [self.root_asset.get_hub_set()]
         for asset_type, child_asset in self.child_assets.items():
-            commands.append((asset_type, child_asset.to_command()))
-        return commands
+            child_cmd = child_asset.to_command()
+            if child_cmd != "still":
+                commands.append((asset_type, child_cmd))
+        return commands if len(commands) > 1 else []
+
+    def __repr__(self):
+        return f"AssetPackage({self.root_asset_key}, {dict(self)})"
 
 
 def generate_commands(packages):

@@ -87,4 +87,4 @@ def test_asset_package_with_no_changes():
     }
     package = model.AssetPackage("root_asset", assets)
     commands = package.to_command()
-    assert commands == ["hub_root", ("child_asset", "still")]
+    assert commands == []
